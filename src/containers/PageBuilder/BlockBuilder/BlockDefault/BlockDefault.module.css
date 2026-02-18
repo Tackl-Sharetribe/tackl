@@ -59,7 +59,32 @@
   & .media {
     border-radius: 16px;
     background: #F5F5F0;
-    height: calc(100% - 16px);
+   height: 173px;
+
+      &>div {
+        &>div {
+          padding: 0 !important;
+          height: 173px;
+
+          & img {
+            object-fit: contain;
+          }
+        }
+      }
+    @media (min-width: 768px) {
+      height: 173px;
+
+      &>div {
+        &>div {
+          padding: 0 !important;
+          height: 173px;
+
+          & img {
+            object-fit: contain;
+          }
+        }
+      }
+    }
 
   }
 
