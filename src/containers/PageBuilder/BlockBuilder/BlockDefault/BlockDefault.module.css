@@ -1,5 +1,4 @@
-.root {
-}
+.root {}
 
 .media {
   width: 100%;
@@ -23,8 +22,8 @@
 .alignCenter {
   text-align: center;
 
-  & > ul,
-  & > ol {
+  &>ul,
+  &>ol {
     text-align: left;
     width: fit-content;
     /* center */
@@ -32,7 +31,7 @@
     margin-right: auto;
   }
 
-  & > p {
+  &>p {
     /* center */
     margin-left: auto;
     margin-right: auto;
@@ -41,16 +40,54 @@
 
 .alignRight {
   text-align: right;
-  & > ul,
-  & > ol {
+
+  &>ul,
+  &>ol {
     text-align: left;
     width: fit-content;
     /* push to right */
     margin-left: auto;
   }
 
-  & > p {
+  &>p {
     /* push to right */
     margin-left: auto;
+  }
+}
+
+:global(#landing-category-slider) {
+  & .media {
+    border-radius: 16px;
+    background: #F5F5F0;
+    height: calc(100% - 16px);
+
+  }
+
+  & .text {
+    text-align: center;
+
+    & a {
+      margin: 0 auto;
+      font-family: Open Sans;
+      font-weight: 700;
+      font-style: Bold;
+      font-size: 16px;
+      leading-trim: NONE;
+      line-height: 24px;
+      letter-spacing: 0px;
+      text-align: center;
+      background: transparent;
+      color: #2B2B2B;
+      box-shadow: none;
+      padding: 0;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+    }
   }
 }

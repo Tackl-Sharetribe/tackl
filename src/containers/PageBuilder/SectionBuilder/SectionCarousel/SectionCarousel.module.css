@@ -306,3 +306,14 @@
 box-shadow: 2px 4px 10px 2px #BDBDBD70;
 
 }
+
+:global(#landing-category-slider){
+  & .block{
+    position: relative;
+    padding-bottom: 20px;
+    @media (min-width: 768px) {
+      margin-right: 24px;
+      width: calc((min(var(--contentMaxWidthPages), var(--carouselWidth)) - 64px - 96px) / 6);
+    }
+  }
+}

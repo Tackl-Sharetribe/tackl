@@ -115,7 +115,7 @@
         margin-bottom: 40px;
         display: block;
 
-        & h2 {
+        /* & h2 {
             font-family: Inter;
             font-weight: 700;
             font-size: 24px;
@@ -127,7 +127,7 @@
             max-width: 100%;
             padding: 0;
             margin: 0;
-        }
+        } */
 
         & p {
             font-family: Inter;
@@ -811,8 +811,8 @@
             padding: 0 16px;
 
             & h2 {
-                font-size: 24px;
-                line-height: 30px;
+                font-size: 14px;
+                line-height: 20px;
                 margin: 0 0 16px;
             }
 
