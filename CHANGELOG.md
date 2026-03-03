@@ -14,6 +14,47 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2026-XX-XX
 
+## [v10.13.0] 2026-02-26
+
+- [change] Hides listing description input/display when option is toggled off in Console > Listing
+  types > Default listing fields
+  [#767](https://github.com/sharetribe/web-template/pull/767)
+- [change] ListingCard: refactor and add aria-label attribute to the component.
+  [#787](https://github.com/sharetribe/web-template/pull/787)
+- [fix] FieldSelectIntegerRange: fix aria-attributes.
+  [#786](https://github.com/sharetribe/web-template/pull/786)
+- [add] Add currently available translations for DE, ES, FR.
+  [#790](https://github.com/sharetribe/web-template/pull/790)
+
+  [v10.13.0]: https://github.com/sharetribe/web-template/compare/v10.12.1...v10.13.0
+
+## [v10.12.1] 2026-02-24
+
+- [fix] Fix submitting inquiry without transaction fields
+  [#788](https://github.com/sharetribe/web-template/pull/788)
+- [add] Prevent saving customer fields when provider is making an offer
+  [#785](https://github.com/sharetribe/web-template/pull/785)
+- [fix] Remove location heading for listing types with no location
+  [#783](https://github.com/sharetribe/web-template/pull/783)
+- [fix] Fix boolean support for transaction fields
+  [#782](https://github.com/sharetribe/web-template/pull/782)
+- [add] Fix a Marketplace text [#784](https://github.com/sharetribe/web-template/pull/784)
+- [add] Add currently available translations for DE, ES, FR.
+  [#781](https://github.com/sharetribe/web-template/pull/781)
+
+  [v10.12.0]: https://github.com/sharetribe/web-template/compare/v10.12.0...v10.12.1
+
+## [v10.12.0] 2026-02-19
+
+- [add] Add transaction fields based on Console configuration
+
+  This PR prepares the codebase for using transaction field configurations that will be a part of
+  the listing type asset. Operators can define transaction fields per listing type.
+
+  [#737](https://github.com/sharetribe/web-template/pull/737)
+
+  [v10.12.0]: https://github.com/sharetribe/web-template/compare/v10.11.0...v10.12.0
+
 ## [v10.11.0] 2026-02-12
 
 - [add] Add AGENTS.md file to provide context for LLMs.
@@ -33,6 +74,7 @@ way to update this template, but currently, we follow a pattern:
   [#769](https://github.com/sharetribe/web-template/pull/769)
 - [fix] ListingPage.duck.js: fix a bug where inquiry is not allowed for customer role on OFFER flow.
   [#768](https://github.com/sharetribe/web-template/pull/768)
+
 - [fix] EditListingPage.duck.js: fix a bug where exception cache was not updated correctly.
   [#766](https://github.com/sharetribe/web-template/pull/766)
 
