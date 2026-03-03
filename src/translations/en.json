@@ -1421,5 +1421,11 @@
   "UserNav.accountSettings": "Account settings",
   "UserNav.profileSettings": "Profile settings",
   "UserNav.screenreader.userNav": "User profile navigation",
-  "UserNav.yourListings": "Your listings"
+  "UserNav.yourListings": "Your listings",
+  "LayoutWrapperAccountSettingsSideNav.addressTabTitle": "Address details",
+  "AddressPage.title": "Address details",
+  "AddressPage.heading": "Address details",
+  "AddressForm.saveChanges": "Save changes",
+  "ShippingDetails.stateRequired": "State is required.",
+  "EditListingDetailsPanel.addressModalTitle": "Add your address"
 }

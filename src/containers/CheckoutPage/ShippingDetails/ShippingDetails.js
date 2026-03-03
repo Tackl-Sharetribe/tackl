@@ -23,7 +23,7 @@ import css from './ShippingDetails.module.css';
  * @param {string} props.fieldId - The field ID
  */
 const ShippingDetails = props => {
-  const { rootClassName, className, locale, intl, disabled, formApi, fieldId } = props;
+  const { rootClassName, className, locale, intl, disabled, formApi, fieldId, hideHeading } = props;
   const classes = classNames(rootClassName || css.root, className);
 
   const optionalText = intl.formatMessage({
@@ -31,13 +31,15 @@ const ShippingDetails = props => {
   });
 
   // Use the language set in config.localization.locale to get the correct translations of the country names
-  const countryCodes = getCountryCodes(locale);
+  const countryCodes = getCountryCodes(locale).filter(country => country.code === 'GB');
 
   return (
     <div className={classes}>
-      <Heading as="h3" rootClassName={css.heading}>
-        <FormattedMessage id="ShippingDetails.title" />
-      </Heading>
+      {!hideHeading && (
+        <Heading as="h3" rootClassName={css.heading}>
+          <FormattedMessage id="ShippingDetails.title" />
+        </Heading>
+      )}
       <FieldTextInput
         id={`${fieldId}.recipientName`}
         name="recipientName"
@@ -149,6 +151,7 @@ const ShippingDetails = props => {
             { optionalText: optionalText }
           )}
           placeholder={intl.formatMessage({ id: 'ShippingDetails.statePlaceholder' })}
+          // validate={validators.required(intl.formatMessage({ id: 'ShippingDetails.stateRequired' }))}
           onUnmount={() => formApi.change('recipientState', undefined)}
         />
 

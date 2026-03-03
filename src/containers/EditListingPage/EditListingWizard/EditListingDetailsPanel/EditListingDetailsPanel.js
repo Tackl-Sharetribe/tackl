@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 
 // Import util modules
 import { FormattedMessage } from '../../../../util/reactIntl';
@@ -16,6 +17,7 @@ import {
   pickCategoryFields,
 } from '../../../../util/fieldHelpers';
 import { isBookingProcessAlias } from '../../../../transactions/transaction';
+import { ensureCurrentUser } from '../../../../util/data';
 
 // Import shared components
 import { H3, ListingLink } from '../../../../components';
@@ -23,6 +25,7 @@ import { H3, ListingLink } from '../../../../components';
 // Import modules from this directory
 import ErrorMessage from './ErrorMessage';
 import EditListingDetailsForm from './EditListingDetailsForm';
+import AddressDetailsModal from './AddressDetailsModal';
 import css from './EditListingDetailsPanel.module.css';
 
 /**
@@ -292,6 +295,9 @@ const getInitialValues = (
  * @returns {JSX.Element}
  */
 const EditListingDetailsPanel = props => {
+  const { currentUser } = useSelector(state => state.user);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+
   const {
     className,
     rootClassName,
@@ -309,6 +315,7 @@ const EditListingDetailsPanel = props => {
     config,
     updatePageTitle: UpdatePageTitle,
     intl,
+    onManageDisableScrolling,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
@@ -368,6 +375,10 @@ const EditListingDetailsPanel = props => {
         messageProps: {},
       };
 
+  const user = ensureCurrentUser(currentUser);
+  const { protectedData } = user.attributes.profile || {};
+  const addressExists = !!protectedData?.address;
+
   return (
     <main className={classes}>
       <UpdatePageTitle
@@ -386,6 +397,11 @@ const EditListingDetailsPanel = props => {
           initialValues={initialValues}
           saveActionMsg={submitButtonText}
           onSubmit={values => {
+            if (!addressExists) {
+              setIsAddressModalOpen(true);
+              return;
+            }
+
             const {
               title,
               description,
@@ -464,6 +480,15 @@ const EditListingDetailsPanel = props => {
           invalidExistingListingType={!hasValidExistingListingType}
         />
       )}
+
+      {isAddressModalOpen ? (
+        <AddressDetailsModal
+          isOpen={isAddressModalOpen}
+          onClose={() => setIsAddressModalOpen(false)}
+          onManageDisableScrolling={onManageDisableScrolling}
+          displayName={user.attributes.profile?.displayName}
+        />
+      ) : null}
     </main>
   );
 };
