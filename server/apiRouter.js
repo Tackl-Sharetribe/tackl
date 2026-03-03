@@ -16,11 +16,14 @@ const transactionLineItems = require('./api/transaction-line-items');
 const initiatePrivileged = require('./api/initiate-privileged');
 const transitionPrivileged = require('./api/transition-privileged');
 const deleteAccount = require('./api/delete-account');
+const createLabel = require('./api/shipping/create-label');
 
 const createUserWithIdp = require('./api/auth/createUserWithIdp');
 
 const { authenticateFacebook, authenticateFacebookCallback } = require('./api/auth/facebook');
 const { authenticateGoogle, authenticateGoogleCallback } = require('./api/auth/google');
+const generatePresignedUrl = require('./api/presigned-url');
+const middleware = require('./middleware');
 
 const router = express.Router();
 
@@ -81,5 +84,10 @@ router.get('/auth/google', authenticateGoogle);
 // with Google. In this route a Passport.js custom callback is used for calling
 // loginWithIdp endpoint in Sharetribe Auth API to authenticate user to the marketplace
 router.get('/auth/google/callback', authenticateGoogleCallback);
+
+// Shipping: create a shipping label via MoovParcel
+router.post('/shipping/create-label', middleware.auth, createLabel);
+
+router.post('/presigned-url', middleware.auth, generatePresignedUrl);
 
 module.exports = router;

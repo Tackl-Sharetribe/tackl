@@ -151,3 +151,13 @@ export const createUserWithIdp = body => {
 export const deleteUserAccount = body => {
   return post('/api/delete-account', body);
 };
+
+// Create a shipping label via MoovParcel.
+// See `server/api/shipping/create-label.js` for expected body shape.
+export const createShippingLabel = body => {
+  return post('/api/shipping/create-label', body);
+};
+
+export const generatePresignedUrl = body => {
+  return post('/api/presigned-url', body);
+};
