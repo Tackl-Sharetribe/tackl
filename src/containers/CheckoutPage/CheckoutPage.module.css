@@ -466,3 +466,8 @@
     margin-bottom: 40px;
   }
 }
+
+.iconSpinner {
+  margin: auto;
+  width: 50px;
+}

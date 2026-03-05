@@ -229,7 +229,7 @@ const LocationOrShippingDetails = props => {
     : intl.formatMessage({ id: 'StripePaymentForm.locationUnknown' });
 
   return askShippingDetails ? (
-    <ShippingDetails intl={intl} formApi={formApi} locale={locale} />
+    <ShippingDetails intl={intl} formApi={formApi} locale={locale} disabled={true} />
   ) : showPickUpLocation ? (
     <div className={css.locationWrapper}>
       <Heading as="h3" rootClassName={css.heading}>

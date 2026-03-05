@@ -431,6 +431,45 @@ const EditListingDetailsPanel = props => {
               nestedCategories,
               listingFields
             );
+
+            const { length, width, height, weight } = publicListingFields;
+
+            const carriers = [];
+
+            // DPD Parcelshop – Next Day Service (via Moov Parcel)
+            // Max weight: 20kg, Max length: 60cm, Max dimensions L+W+H: 180cm
+            const dpdMaxWeight = 20;
+            const dpdMaxLength = 60;
+            const dpdMaxGirth = 180;
+            const dpdLengthOk = length != null && length <= dpdMaxLength;
+            const dpdGirthOk =
+              length != null &&
+              width != null &&
+              height != null &&
+              length + width + height <= dpdMaxGirth;
+            const dpdWeightOk = weight != null && weight <= dpdMaxWeight;
+            if (dpdLengthOk && dpdGirthOk && dpdWeightOk) {
+              carriers.push('dpd');
+            }
+
+            // Yodel Parcelshop – Xpect Medium (via Moov Parcel)
+            // Max weight: 10kg, Max length: 90cm, L+W ≤ 150cm, volume ≤ 0.113m³
+            const yodelMaxWeight = 10;
+            const yodelMaxLength = 90;
+            const yodelMaxLW = 150;
+            const yodelMaxVolume = 0.113; // m³
+            const yodelLengthOk = length != null && length <= yodelMaxLength;
+            const yodelLWOk = length != null && width != null && length + width <= yodelMaxLW;
+            const yodelVolumeOk =
+              length != null &&
+              width != null &&
+              height != null &&
+              (length / 100) * (width / 100) * (height / 100) <= yodelMaxVolume;
+            const yodelWeightOk = weight != null && weight <= yodelMaxWeight;
+            if (yodelLengthOk && yodelLWOk && yodelVolumeOk && yodelWeightOk) {
+              carriers.push('yodel');
+            }
+
             // New values for listing attributes
             const updateValues = {
               title: title.trim(),
@@ -441,6 +480,7 @@ const EditListingDetailsPanel = props => {
                 unitType,
                 ...cleanedNestedCategories,
                 ...publicListingFields,
+                carriers,
               },
               privateData: privateListingFields,
               ...setNoAvailabilityForUnbookableListings(transactionProcessAlias),

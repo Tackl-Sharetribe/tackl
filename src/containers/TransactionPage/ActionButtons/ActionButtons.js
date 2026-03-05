@@ -8,6 +8,11 @@ import { allowCustomerCounterOffer, allowProviderUpdateOffer } from '../../../ut
 import { PrimaryButton, SecondaryButton, Button } from '../../../components';
 
 import css from './ActionButtons.module.css';
+import { createShippingLabel, updateTransactionMetadata } from '../../../util/api';
+import { useDispatch } from 'react-redux';
+import { useConfiguration } from '../../../context/configurationContext';
+import { fetchTransactionThunk } from '../TransactionPage.duck';
+import OwnShippingModal from './OwnShippingModal';
 
 export const ACTION_BUTTON_1_ID = 'actionButton1';
 export const ACTION_BUTTON_2_ID = 'actionButton2';
@@ -145,6 +150,10 @@ const getButtonStatus = (buttonProps, additionalInfo) => {
  * @param {boolean} [props.isCounterpartyInactive] - Whether the counterparty is inactive
  */
 const ActionButtons = props => {
+  const dispatch = useDispatch();
+  const config = useConfiguration();
+  const [loading, setLoading] = React.useState(false);
+  const [isOwnShippingModalOpen, setIsOwnShippingModalOpen] = React.useState(false);
   const {
     className,
     rootClassName,
@@ -161,6 +170,10 @@ const ActionButtons = props => {
     errorMessageId,
     timeZone = 'Etc/UTC',
     isCounterpartyInactive,
+    protectedData,
+    metadata,
+    txId,
+    onManageDisableScrolling,
   } = props;
 
   const intl = useIntl();
@@ -204,6 +217,50 @@ const ActionButtons = props => {
 
   const classes = classNames(rootClassName || css.root, className);
 
+  const isPlatformManagedShipping = protectedData?.carrier;
+  const isOwnShipping = protectedData?.deliveryMethod === 'shipping' && !isPlatformManagedShipping;
+  const isLabelCreated = metadata?.courierDetails?.courier;
+
+  const handlePrimaryAction = async () => {
+    if (isPlatformManagedShipping && !isLabelCreated && isProvider) {
+      setLoading(true);
+      const res = await createShippingLabel({ txId: txId.uuid });
+
+      if (res.uri) {
+        await dispatch(fetchTransactionThunk({ id: txId, txRole: 'provider', config }));
+      } else {
+        window.alert('Failed to create shipping label. Please contact support.');
+      }
+      setLoading(false);
+    } else if (isOwnShipping && !isLabelCreated && isProvider) {
+      setIsOwnShippingModalOpen(true);
+    } else {
+      primaryButtonProps.onAction();
+    }
+  };
+
+  const handleOwnShippingSubmit = async values => {
+    try {
+      setLoading(true);
+      await updateTransactionMetadata({
+        metadata: {
+          courierDetails: {
+            courier: values.carrierName,
+            tracking_codes: [values.trackingNumber],
+            images: values.shipmentProofImages,
+          },
+        },
+        txId,
+      });
+      await dispatch(fetchTransactionThunk({ id: txId, txRole: 'provider', config }));
+      setIsOwnShippingModalOpen(false);
+      setLoading(false);
+    } catch (error) {
+      window.alert('Failed to submit shipping details. Please try again.');
+      setLoading(false);
+    }
+  };
+
   return showButtons ? (
     <div className={classes}>
       <div className={css.actionErrors}>
@@ -221,11 +278,19 @@ const ActionButtons = props => {
               <div className={css.actionButtonWrapper} key={buttonType}>
                 <PrimaryButton
                   id={`${containerId}_${ACTION_BUTTON_1_ID}`}
-                  inProgress={primaryButtonProps.inProgress}
-                  disabled={buttonsDisabled || disabled}
-                  onClick={primaryButtonProps.onAction}
+                  inProgress={
+                    (isPlatformManagedShipping || isOwnShipping) && !isLabelCreated && isProvider
+                      ? loading
+                      : primaryButtonProps.inProgress
+                  }
+                  disabled={buttonsDisabled || disabled || loading}
+                  onClick={handlePrimaryAction}
                 >
-                  {primaryButtonProps.buttonText}
+                  {isPlatformManagedShipping && !isLabelCreated && isProvider
+                    ? 'Create Label'
+                    : isOwnShipping && !isLabelCreated && isProvider
+                    ? 'Enter Label Details'
+                    : primaryButtonProps.buttonText}
                 </PrimaryButton>
                 {disabled && <div className={css.finePrint}>{reason}</div>}
               </div>
@@ -272,6 +337,16 @@ const ActionButtons = props => {
           </div>
         ) : null}
       </div>
+      {isOwnShippingModalOpen ? (
+        <OwnShippingModal
+          isOpen={isOwnShippingModalOpen}
+          onClose={() => setIsOwnShippingModalOpen(false)}
+          onManageDisableScrolling={onManageDisableScrolling}
+          onSubmit={handleOwnShippingSubmit}
+          txId={txId?.uuid}
+          submitInProgress={loading}
+        />
+      ) : null}
     </div>
   ) : null;
 };

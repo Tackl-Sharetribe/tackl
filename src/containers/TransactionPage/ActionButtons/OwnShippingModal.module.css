@@ -1,0 +1,156 @@
+@import '../../../styles/customMediaQueries.css';
+
+.root {
+}
+
+.modalContent {
+  flex-grow: 1;
+}
+
+.modalTitle {
+  composes: marketplaceModalTitleStyles from global;
+  margin-bottom: 12px;
+}
+
+.modalMessage {
+  composes: marketplaceBodyFontStyles from global;
+  color: var(--colorGrey700);
+  margin: 0 0 24px 0;
+}
+
+.formRoot {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldGroup {
+  margin-bottom: 24px;
+}
+
+.uploadSection {
+  margin-bottom: 24px;
+}
+
+.uploadLabel {
+  composes: marketplaceSmallFontStyles from global;
+  font-weight: var(--fontWeightSemiBold);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.uploadButton {
+  composes: marketplaceSmallFontStyles from global;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px dashed var(--colorGrey300);
+  border-radius: var(--borderRadiusMedium, 4px);
+  cursor: pointer;
+  color: var(--colorGrey700);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--marketplaceColor);
+    color: var(--marketplaceColor);
+  }
+}
+
+.uploadButtonDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  &:hover {
+    border-color: var(--colorGrey300);
+    color: var(--colorGrey700);
+  }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.previewContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.previewItem {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--borderRadiusMedium, 4px);
+  overflow: hidden;
+  border: 1px solid var(--colorGrey200);
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--colorFail);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+}
+
+.uploadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--colorGrey300);
+  border-top-color: var(--marketplaceColor);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.uploadError {
+  composes: marketplaceTinyFontStyles from global;
+  color: var(--colorFail);
+  margin-top: 4px;
+}
+
+.fieldError {
+  composes: marketplaceTinyFontStyles from global;
+  color: var(--colorFail);
+  margin-top: 4px;
+}
+
+.submitButton {
+  margin-top: auto;
+  flex-shrink: 0;
+}

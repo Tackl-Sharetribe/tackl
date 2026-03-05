@@ -191,6 +191,7 @@ export class TransactionPanelComponent extends Component {
       config,
       hasViewingRights,
       transactionFieldsComponent,
+      metadata,
     } = this.props;
 
     const hasTransitions = transitions.length > 0;
@@ -322,6 +323,8 @@ export class TransactionPanelComponent extends Component {
                   protectedData={protectedData}
                   listing={listing}
                   locale={config.localization.locale}
+                  metadata={metadata}
+                  isProvider={isProvider}
                 />
                 <BookingLocationMaybe
                   className={css.deliveryInfoSection}

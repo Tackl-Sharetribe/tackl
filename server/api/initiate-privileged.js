@@ -8,6 +8,7 @@ const {
   serialize,
   fetchCommission,
 } = require('../api-util/sdk');
+const { getShippingPriceByCarrier } = require('./shipping/moovparcel');
 
 const { Money } = sharetribeSdk.types;
 
@@ -64,9 +65,20 @@ module.exports = (req, res) => {
       const { providerCommission, customerCommission } =
         commissionAsset?.type === 'jsonAsset' ? commissionAsset.attributes.data : {};
 
+      let shippingPrice = null;
+      if (bodyParams.params.protectedData?.carrier) {
+        const { length, width, height, weight } = listing.attributes.publicData;
+        shippingPrice = getShippingPriceByCarrier(bodyParams.params.protectedData?.carrier, {
+          length,
+          width,
+          height,
+          weight,
+        });
+      }
+
       lineItems = transactionLineItems(
         listing,
-        getFullOrderData(orderData, bodyParams, currency),
+        getFullOrderData({ ...orderData, shippingPrice }, bodyParams, currency),
         providerCommission,
         customerCommission
       );

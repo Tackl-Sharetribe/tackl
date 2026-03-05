@@ -256,6 +256,7 @@ const fetchTransactionPayloadCreator = (
           'reviews',
           'reviews.author',
           'reviews.subject',
+          'metadata',
         ],
         ...getImageVariants(config.layout.listingImage),
       },

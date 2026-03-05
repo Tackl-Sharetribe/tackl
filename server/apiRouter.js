@@ -24,6 +24,7 @@ const { authenticateFacebook, authenticateFacebookCallback } = require('./api/au
 const { authenticateGoogle, authenticateGoogleCallback } = require('./api/auth/google');
 const generatePresignedUrl = require('./api/presigned-url');
 const middleware = require('./middleware');
+const updateTxMetadata = require('./api/update-tx-metadata');
 
 const router = express.Router();
 
@@ -89,5 +90,8 @@ router.get('/auth/google/callback', authenticateGoogleCallback);
 router.post('/shipping/create-label', middleware.auth, createLabel);
 
 router.post('/presigned-url', middleware.auth, generatePresignedUrl);
+
+//update metadata
+router.post('/update-tx-metadata', middleware.auth, updateTxMetadata);
 
 module.exports = router;

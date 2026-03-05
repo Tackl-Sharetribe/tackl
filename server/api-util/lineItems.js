@@ -21,13 +21,16 @@ const getItemQuantityAndLineItems = (orderData, publicData, currency) => {
   const deliveryMethod = orderData && orderData.deliveryMethod;
   const isShipping = deliveryMethod === 'shipping';
   const isPickup = deliveryMethod === 'pickup';
-  const { shippingPriceInSubunitsOneItem, shippingPriceInSubunitsAdditionalItems } =
+  const { shippingPriceInSubunitsOneItem = 0, shippingPriceInSubunitsAdditionalItems = 0 } =
     publicData || {};
+  const isShippingPricePresent = !!orderData.shippingPrice;
 
   // Calculate shipping fee if applicable
   const shippingFee = isShipping
     ? calculateShippingFee(
-        shippingPriceInSubunitsOneItem,
+        isShippingPricePresent
+          ? Number(orderData.shippingPrice) * 100
+          : shippingPriceInSubunitsOneItem,
         shippingPriceInSubunitsAdditionalItems,
         currency,
         quantity
@@ -42,7 +45,7 @@ const getItemQuantityAndLineItems = (orderData, publicData, currency) => {
           code: 'line-item/shipping-fee',
           unitPrice: shippingFee,
           quantity: 1,
-          includeFor: ['customer', 'provider'],
+          includeFor: isShippingPricePresent ? ['customer'] : ['customer', 'provider'],
         },
       ]
     : [];

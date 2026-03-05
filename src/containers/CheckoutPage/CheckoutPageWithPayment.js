@@ -119,6 +119,7 @@ const getOrderParams = (
   const deliveryMethod = pageData.orderData?.deliveryMethod;
   const deliveryMethodMaybe = deliveryMethod ? { deliveryMethod } : {};
   const { listingType, unitType, priceVariants } = pageData?.listing?.attributes?.publicData || {};
+  const carrier = pageData.orderData?.carrier;
 
   // price variant data for fixed duration bookings
   const priceVariantName = pageData.orderData?.priceVariantName;
@@ -136,6 +137,7 @@ const getOrderParams = (
       ...priceVariantMaybe,
       ...transactionFieldProtectedData,
       ...customerDefaultMessageMaybe,
+      carrier,
     },
   };
 
@@ -530,6 +532,7 @@ export const CheckoutPageWithPayment = props => {
   const userName = currentUser?.attributes?.profile
     ? `${currentUser.attributes.profile.firstName} ${currentUser.attributes.profile.lastName}`
     : null;
+  const { address = {} } = currentUser.attributes.profile.protectedData || {};
 
   // If paymentIntent status is not waiting user action,
   // confirmCardPayment has been called previously.
@@ -539,7 +542,7 @@ export const CheckoutPageWithPayment = props => {
   // If your marketplace works mostly in one country you can use initial values to select country automatically
   // e.g. {country: 'FI'}
 
-  const initialValuesForStripePayment = { name: userName, recipientName: userName };
+  const initialValuesForStripePayment = { name: userName, recipientName: userName, ...address };
   const askShippingDetails =
     orderData?.deliveryMethod === 'shipping' &&
     !hasTransactionPassedPendingPayment(existingTransaction, process);

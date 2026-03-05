@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import getCountryCodes from '../../../translations/countryCodes';
 import { FormattedMessage } from '../../../util/reactIntl';
-import { Heading } from '../../../components';
+import { ExternalLink, Heading } from '../../../components';
 
 import AddressLinkMaybe from './AddressLinkMaybe';
 
@@ -11,7 +11,7 @@ import css from './TransactionPanel.module.css';
 
 // Functional component as a helper to build ActivityFeed section
 const DeliveryInfoMaybe = props => {
-  const { className, rootClassName, protectedData, listing, locale } = props;
+  const { className, rootClassName, protectedData, listing, locale, metadata, isProvider } = props;
   const classes = classNames(rootClassName || css.deliveryInfoContainer, className);
   const deliveryMethod = protectedData?.deliveryMethod;
   const isShipping = deliveryMethod === 'shipping';
@@ -48,6 +48,9 @@ const DeliveryInfoMaybe = props => {
     const countryInfo = countryCodes.find(c => c.code === countryCode);
     const country = countryInfo?.name;
 
+    const isPlatformManagedShipping = protectedData?.carrier;
+    const courierDetails = metadata?.courierDetails;
+
     return (
       <div className={classes}>
         <Heading as="h3" rootClassName={css.sectionHeading}>
@@ -66,6 +69,25 @@ const DeliveryInfoMaybe = props => {
           {country}
           <br />
         </div>
+
+        {courierDetails?.tracking_codes && (
+          <>
+            <div className={css.shippingInfoContent}>
+              <b>Carrier:</b>{' '}
+              {isPlatformManagedShipping
+                ? protectedData.carrier === 'yodel'
+                  ? 'Yodel'
+                  : 'DPD'
+                : courierDetails.courier}
+              <br />
+              <b>Tracking Code:</b> {courierDetails.tracking_codes[0]}
+              <br />
+              {isProvider && courierDetails.uri && (
+                <ExternalLink href={courierDetails.uri}>Shipping Label link</ExternalLink>
+              )}
+            </div>
+          </>
+        )}
       </div>
     );
   }

@@ -21,6 +21,7 @@ import EstimatedCustomerBreakdownMaybe from '../EstimatedCustomerBreakdownMaybe'
 import FetchLineItemsError from '../FetchLineItemsError/FetchLineItemsError.js';
 
 import css from './ProductOrderForm.module.css';
+import { useSelector } from 'react-redux';
 
 // Browsers can't render huge number of select options.
 // (stock is shown inside select element)
@@ -30,6 +31,7 @@ const MAX_QUANTITY_FOR_DROPDOWN = 100;
 const handleFetchLineItems = ({
   quantity,
   deliveryMethod,
+  carrier,
   displayDeliveryMethod,
   listingId,
   isOwnListing,
@@ -38,6 +40,7 @@ const handleFetchLineItems = ({
 }) => {
   const stockReservationQuantity = Number.parseInt(quantity, 10);
   const deliveryMethodMaybe = deliveryMethod ? { deliveryMethod } : {};
+  const carrierMaybe = carrier && deliveryMethod === 'shipping' ? { carrier } : {};
   const isBrowser = typeof window !== 'undefined';
   if (
     isBrowser &&
@@ -46,7 +49,7 @@ const handleFetchLineItems = ({
     !fetchLineItemsInProgress
   ) {
     onFetchTransactionLineItems({
-      orderData: { stockReservationQuantity, ...deliveryMethodMaybe },
+      orderData: { stockReservationQuantity, ...deliveryMethodMaybe, ...carrierMaybe },
       listingId,
       isOwnListing,
     });
@@ -109,6 +112,31 @@ const DeliveryMethodMaybe = props => {
   );
 };
 
+const CarrierSelectMaybe = props => {
+  const { isPlatformShipping, deliveryMethod, formId, intl, carriers } = props;
+
+  if (!isPlatformShipping || deliveryMethod !== 'shipping') return null;
+
+  return (
+    <FieldSelect
+      id={`${formId}.carrier`}
+      className={css.deliveryField}
+      name="carrier"
+      label={intl.formatMessage({ id: 'ProductOrderForm.carrierLabel' })}
+      validate={required(intl.formatMessage({ id: 'ProductOrderForm.carrierRequired' }))}
+    >
+      <option disabled value="">
+        {intl.formatMessage({ id: 'ProductOrderForm.selectCarrierOption' })}
+      </option>
+      {carriers.map(carrier => (
+        <option key={carrier} value={carrier}>
+          {intl.formatMessage({ id: `ProductOrderForm.carrier${carrier}` })}
+        </option>
+      ))}
+    </FieldSelect>
+  );
+};
+
 const renderForm = formRenderProps => {
   const [mounted, setMounted] = useState(false);
   const {
@@ -134,7 +162,12 @@ const renderForm = formRenderProps => {
     payoutDetailsWarning,
     marketplaceName,
     values,
+    currentUser,
+    listingPublicData,
   } = formRenderProps;
+  const { carriers } = listingPublicData || {};
+  const isPlatformShipping = carriers.length > 0;
+  const selectedDeliveryMethod = values?.deliveryMethod;
 
   // Note: don't add custom logic before useEffect
   useEffect(() => {
@@ -157,11 +190,17 @@ const renderForm = formRenderProps => {
 
   // If form values change, update line-items for the order breakdown
   const handleOnChange = formValues => {
-    const { quantity, deliveryMethod } = formValues.values;
+    const { quantity, deliveryMethod, carrier } = formValues.values;
+
+    if (deliveryMethod === 'shipping' && isPlatformShipping && !carrier) {
+      return;
+    }
+
     if (mounted) {
       handleFetchLineItems({
         quantity,
         deliveryMethod,
+        carrier,
         listingId,
         isOwnListing,
         fetchLineItemsInProgress,
@@ -174,6 +213,16 @@ const renderForm = formRenderProps => {
   // Otherwise continue with the default handleSubmit function.
   const handleFormSubmit = e => {
     const { quantity, deliveryMethod } = values || {};
+
+    const { protectedData } = currentUser.attributes.profile || {};
+
+    if (!protectedData?.address && deliveryMethod === 'shipping') {
+      e.preventDefault();
+      window.alert(intl.formatMessage({ id: 'ProductOrderForm.addressRequiredToOrder' }));
+      window.location.href = '/account/address';
+      return;
+    }
+
     if (!quantity || quantity < 1) {
       e.preventDefault();
       // Blur event will show validator message
@@ -184,6 +233,10 @@ const renderForm = formRenderProps => {
       // Blur event will show validator message
       formApi.blur('deliveryMethod');
       formApi.focus('deliveryMethod');
+    } else if (isPlatformShipping && deliveryMethod === 'shipping' && !values?.carrier) {
+      e.preventDefault();
+      formApi.blur('carrier');
+      formApi.focus('carrier');
     } else {
       handleSubmit(e);
     }
@@ -253,8 +306,16 @@ const renderForm = formRenderProps => {
       <DeliveryMethodMaybe
         displayDeliveryMethod={displayDeliveryMethod}
         hasMultipleDeliveryMethods={hasMultipleDeliveryMethods}
-        deliveryMethod={values?.deliveryMethod}
+        deliveryMethod={selectedDeliveryMethod}
         hasStock={hasStock}
+        formId={formId}
+        intl={intl}
+      />
+
+      <CarrierSelectMaybe
+        carriers={carriers}
+        isPlatformShipping={isPlatformShipping}
+        deliveryMethod={selectedDeliveryMethod}
         formId={formId}
         intl={intl}
       />
@@ -327,6 +388,7 @@ const renderForm = formRenderProps => {
  */
 const ProductOrderForm = props => {
   const intl = useIntl();
+  const { currentUser } = useSelector(state => state.user);
   const {
     price,
     currentStock,
@@ -368,6 +430,7 @@ const ProductOrderForm = props => {
       {...props}
       intl={intl}
       render={renderForm}
+      currentUser={currentUser}
     />
   );
 };

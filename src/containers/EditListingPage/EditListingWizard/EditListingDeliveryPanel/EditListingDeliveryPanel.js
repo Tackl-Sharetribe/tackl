@@ -138,6 +138,9 @@ const EditListingDeliveryPanel = props => {
         messageProps: {},
       };
 
+  const { carriers } = listing?.attributes?.publicData;
+  const manageOwnShipping = carriers?.length === 0;
+
   return (
     <main className={classes}>
       <UpdatePageTitle
@@ -216,6 +219,7 @@ const EditListingDeliveryPanel = props => {
           updateInProgress={updateInProgress}
           fetchErrors={errors}
           autoFocus
+          manageOwnShipping={manageOwnShipping}
         />
       ) : (
         <div className={css.priceCurrencyInvalid}>

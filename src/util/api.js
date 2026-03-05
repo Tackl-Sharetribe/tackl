@@ -161,3 +161,7 @@ export const createShippingLabel = body => {
 export const generatePresignedUrl = body => {
   return post('/api/presigned-url', body);
 };
+
+export const updateTransactionMetadata = body => {
+  return post('/api/update-tx-metadata', body);
+};

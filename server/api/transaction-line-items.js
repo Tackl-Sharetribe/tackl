@@ -1,12 +1,12 @@
 const { transactionLineItems } = require('../api-util/lineItems');
 const { getSdk, handleError, serialize, fetchCommission } = require('../api-util/sdk');
 const { constructValidLineItems } = require('../api-util/lineItemHelpers');
+const { getShippingPriceByCarrier } = require('./shipping/moovparcel');
 
 module.exports = (req, res) => {
   const { isOwnListing, listingId, orderData } = req.body || {};
 
   const sdk = getSdk(req, res);
-
   const listingPromise = () =>
     isOwnListing ? sdk.ownListings.show({ id: listingId }) : sdk.listings.show({ id: listingId });
 
@@ -18,9 +18,20 @@ module.exports = (req, res) => {
       const { providerCommission, customerCommission } =
         commissionAsset?.type === 'jsonAsset' ? commissionAsset.attributes.data : {};
 
+      let shippingPrice = null;
+      if (orderData.carrier) {
+        const { length, width, height, weight } = listing.attributes.publicData;
+        shippingPrice = getShippingPriceByCarrier(orderData.carrier, {
+          length,
+          width,
+          height,
+          weight,
+        });
+      }
+
       const lineItems = transactionLineItems(
         listing,
-        orderData,
+        { ...orderData, shippingPrice },
         providerCommission,
         customerCommission
       );

@@ -687,6 +687,7 @@ export const TransactionPageComponent = props => {
       transitions={txTransitions}
       processName={processName}
       protectedData={transaction?.attributes?.protectedData}
+      metadata={transaction?.attributes?.metadata}
       messages={messages}
       savePaymentMethodFailed={savePaymentMethodFailed}
       fetchMessagesError={fetchMessagesError}
@@ -714,6 +715,10 @@ export const TransactionPageComponent = props => {
           {...getDataValidationResult(transaction, process)}
           timeZone={listing?.attributes?.availabilityPlan?.timezone || 'Etc/UTC'}
           isCounterpartyInactive={isCounterpartyInactive}
+          protectedData={transaction?.attributes?.protectedData}
+          metadata={transaction?.attributes?.metadata}
+          txId={transaction?.id}
+          onManageDisableScrolling={onManageDisableScrolling}
         />
       )}
       activityFeed={
