@@ -719,6 +719,7 @@ export const TransactionPageComponent = props => {
           metadata={transaction?.attributes?.metadata}
           txId={transaction?.id}
           onManageDisableScrolling={onManageDisableScrolling}
+          selectedCarrier={listing?.attributes?.publicData?.selectedCarrier}
         />
       )}
       activityFeed={

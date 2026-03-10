@@ -22,6 +22,7 @@ import {
   FieldCurrencyInput,
   FieldTextInput,
   FieldCheckbox,
+  FieldSelect,
 } from '../../../../components';
 
 // Import modules from this directory
@@ -73,9 +74,11 @@ export const EditListingDeliveryForm = props => (
         updateInProgress,
         fetchErrors,
         values,
-        manageOwnShipping,
+        carriers,
       } = formRenderProps;
       const intl = useIntl();
+
+      const manageOwnShipping = carriers?.length === 0;
 
       // This is a bug fix for Final Form.
       // Without this, React will return a warning:
@@ -137,14 +140,14 @@ export const EditListingDeliveryForm = props => (
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
-          <FieldCheckbox
+          {/* <FieldCheckbox
             id={formId ? `${formId}.pickup` : 'pickup'}
             className={classNames(css.deliveryCheckbox, { [css.hidden]: !displayMultipleDelivery })}
             name="deliveryOptions"
             label={pickupLabel}
             value="pickup"
-          />
-          <div className={pickupClasses}>
+          /> */}
+          {/* <div className={pickupClasses}>
             {updateListingError ? (
               <p className={css.error}>
                 <FormattedMessage id="EditListingDeliveryForm.updateFailed" />
@@ -206,7 +209,7 @@ export const EditListingDeliveryForm = props => (
               })}
               disabled={!pickupEnabled}
             />
-          </div>
+          </div> */}
 
           <FieldCheckbox
             id={formId ? `${formId}.shipping` : 'shipping'}
@@ -214,9 +217,10 @@ export const EditListingDeliveryForm = props => (
             name="deliveryOptions"
             label={shippingLabel}
             value="shipping"
+            disabled
           />
 
-          {manageOwnShipping && (
+          {manageOwnShipping ? (
             <div className={shippingClasses}>
               <FieldCurrencyInput
                 id={
@@ -291,6 +295,72 @@ export const EditListingDeliveryForm = props => (
                   }
                 />
               ) : null}
+
+              <ul className={css.carrierHelperList}>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage
+                    id="EditListingDeliveryForm.ownShippingHelperItem1"
+                    values={{
+                      link: chunks => (
+                        <a href="https://send.dpd.co.uk/" target="_blank" rel="noopener noreferrer">
+                          {chunks}
+                        </a>
+                      ),
+                    }}
+                  />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.ownShippingHelperItem2" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.ownShippingHelperItem3" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.ownShippingHelperItem4" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.ownShippingHelperItem5" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.ownShippingHelperItem6" />
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div>
+              <FieldSelect
+                id={`${formId}.selectedCarrier`}
+                className={css.deliveryField}
+                name="selectedCarrier"
+                label={intl.formatMessage({ id: 'EditListingDeliveryForm.carrierLabel' })}
+                validate={required(
+                  intl.formatMessage({ id: 'EditListingDeliveryForm.carrierRequired' })
+                )}
+              >
+                <option disabled value="">
+                  {intl.formatMessage({ id: 'EditListingDeliveryForm.selectCarrierOption' })}
+                </option>
+                {carriers.map(carrier => (
+                  <option key={carrier} value={carrier}>
+                    {intl.formatMessage({ id: `EditListingDeliveryForm.carrier${carrier}` })}
+                  </option>
+                ))}
+              </FieldSelect>
+
+              <ul className={css.carrierHelperList}>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.carrierHelperItem1" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.carrierHelperItem2" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.carrierHelperItem3" />
+                </li>
+                <li className={css.carrierHelperItem}>
+                  <FormattedMessage id="EditListingDeliveryForm.carrierHelperItem4" />
+                </li>
+              </ul>
             </div>
           )}
 

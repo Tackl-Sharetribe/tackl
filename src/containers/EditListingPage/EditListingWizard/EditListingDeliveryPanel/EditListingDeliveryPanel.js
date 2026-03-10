@@ -37,10 +37,11 @@ const getInitialValues = props => {
   const location = publicData?.location || {};
   const { address, building } = location;
   const {
-    shippingEnabled,
+    shippingEnabled = true,
     pickupEnabled,
     shippingPriceInSubunitsOneItem,
     shippingPriceInSubunitsAdditionalItems,
+    selectedCarrier,
   } = publicData;
   const deliveryOptions = [];
 
@@ -73,6 +74,7 @@ const getInitialValues = props => {
     deliveryOptions,
     shippingPriceInSubunitsOneItem: shippingOneItemAsMoney,
     shippingPriceInSubunitsAdditionalItems: shippingAdditionalItemsAsMoney,
+    selectedCarrier,
   };
 };
 
@@ -139,7 +141,6 @@ const EditListingDeliveryPanel = props => {
       };
 
   const { carriers } = listing?.attributes?.publicData;
-  const manageOwnShipping = carriers?.length === 0;
 
   return (
     <main className={classes}>
@@ -163,6 +164,7 @@ const EditListingDeliveryPanel = props => {
               shippingPriceInSubunitsOneItem,
               shippingPriceInSubunitsAdditionalItems,
               deliveryOptions,
+              selectedCarrier,
             } = values;
 
             const shippingEnabled = deliveryOptions.includes('shipping');
@@ -192,6 +194,7 @@ const EditListingDeliveryPanel = props => {
                 ...pickupDataMaybe,
                 shippingEnabled,
                 ...shippingDataMaybe,
+                selectedCarrier,
               },
             };
 
@@ -205,6 +208,7 @@ const EditListingDeliveryPanel = props => {
                 shippingPriceInSubunitsOneItem,
                 shippingPriceInSubunitsAdditionalItems,
                 deliveryOptions,
+                selectedCarrier,
               },
             });
             onSubmit(updateValues);
@@ -219,7 +223,7 @@ const EditListingDeliveryPanel = props => {
           updateInProgress={updateInProgress}
           fetchErrors={errors}
           autoFocus
-          manageOwnShipping={manageOwnShipping}
+          carriers={carriers}
         />
       ) : (
         <div className={css.priceCurrencyInvalid}>

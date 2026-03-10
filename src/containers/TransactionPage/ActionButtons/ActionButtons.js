@@ -174,6 +174,7 @@ const ActionButtons = props => {
     metadata,
     txId,
     onManageDisableScrolling,
+    selectedCarrier,
   } = props;
 
   const intl = useIntl();
@@ -217,7 +218,7 @@ const ActionButtons = props => {
 
   const classes = classNames(rootClassName || css.root, className);
 
-  const isPlatformManagedShipping = protectedData?.carrier;
+  const isPlatformManagedShipping = !!selectedCarrier;
   const isOwnShipping = protectedData?.deliveryMethod === 'shipping' && !isPlatformManagedShipping;
   const isLabelCreated = metadata?.courierDetails?.courier;
 

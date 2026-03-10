@@ -18,10 +18,11 @@ module.exports = (req, res) => {
       const { providerCommission, customerCommission } =
         commissionAsset?.type === 'jsonAsset' ? commissionAsset.attributes.data : {};
 
+      const { publicData } = listing.attributes;
       let shippingPrice = null;
-      if (orderData.carrier) {
-        const { length, width, height, weight } = listing.attributes.publicData;
-        shippingPrice = getShippingPriceByCarrier(orderData.carrier, {
+      if (publicData.selectedCarrier) {
+        const { length, width, height, weight } = publicData;
+        shippingPrice = getShippingPriceByCarrier(publicData.selectedCarrier, {
           length,
           width,
           height,

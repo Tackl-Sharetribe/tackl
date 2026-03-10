@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
         .json({ error: 'User not authorized to create shipping label for this transaction.' });
     }
 
-    const carrier = tx.attributes.protectedData.carrier;
+    const carrier = listing.attributes.publicData.selectedCarrier;
     // ------ Extract & convert addresses ------
     const sellerAddress = provider?.attributes?.profile?.protectedData?.address;
     const buyerAddress = customer?.attributes?.profile?.protectedData?.address;
